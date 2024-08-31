@@ -1,3 +1,5 @@
+import { HealthComponent } from '../components/health/health-component'
+import { ColliderComponent } from '../components/collider/collider-component'
 import { BotFighterInputComponent } from '../components/input/bot-fighter-input-component'
 import { VerticalMovementComponent } from '../components/movement/vertical-movement-component'
 import { WeaponComponent } from '../components/weapons/weapon-component'
@@ -9,6 +11,8 @@ export class FighterEnemy extends Phaser.GameObjects.Container {
   #verticalMovementComponent
   #shipSprite: Phaser.GameObjects.Sprite
   #shipEngineSprite: Phaser.GameObjects.Sprite
+  #healthComponent
+  #colliderComponent
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     // initial positioning of player obj on the scene
@@ -44,7 +48,8 @@ export class FighterEnemy extends Phaser.GameObjects.Container {
       yOffset: 10,
       flipY: true,
     })
-
+    this.#healthComponent = new HealthComponent(CONFIG.ENEMY_FIGHTER_HEALTH)
+    this.#colliderComponent = new ColliderComponent(this.#healthComponent)
     // we are listening to update event of the scene and run custom update method
     this.scene.events.on(Phaser.Scenes.Events.UPDATE, this.update, this)
     this.once(
@@ -56,7 +61,32 @@ export class FighterEnemy extends Phaser.GameObjects.Container {
     )
   }
 
+  get weaponGameObjectGroup() {
+    return this.#weaponComponent.bulletGroup
+  }
+
+  get weaponComponent() {
+    return this.#weaponComponent
+  }
+
+  get colliderComponent() {
+    return this.#colliderComponent
+  }
+
+  get healthComponent() {
+    return this.#healthComponent
+  }
+
   update(_: number, dt: number) {
+    if (!this.active) {
+      return
+    }
+
+    if (this.#healthComponent.isDead) {
+      this.setActive(false)
+      this.setVisible(false)
+    }
+
     // on scene update calling inputs custom update methods
     this.#inputComponent.update()
     this.#verticalMovementComponent.update()

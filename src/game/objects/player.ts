@@ -1,3 +1,5 @@
+import { ColliderComponent } from '../components/collider/collider-component'
+import { HealthComponent } from '../components/health/health-component'
 import { KeyboardInputComponent } from '../components/input/keyboard-input-component'
 import { HorizontalMovementComponent } from '../components/movement/horizontal-movement-component'
 import { WeaponComponent } from '../components/weapons/weapon-component'
@@ -9,6 +11,8 @@ export class Player extends Phaser.GameObjects.Container {
   #weaponComponent
   #horizontalMovementComponent
   // #verticalMovementComponent
+  #healthComponent: HealthComponent
+  #colliderComponent: ColliderComponent
   #shipSprite: Phaser.GameObjects.Sprite
   #shipEngineSprite: Phaser.GameObjects.Sprite
   #shipEngineThrusterSprite: Phaser.GameObjects.Sprite
@@ -48,15 +52,16 @@ export class Player extends Phaser.GameObjects.Container {
       interval: CONFIG.PLAYER_BULLET_INTERVAL,
       speed: CONFIG.PLAYER_BULLET_SPEED,
       lifespan: CONFIG.PLAYER_BULLET_LIFESPAN,
-      flipY: false
+      flipY: false,
     })
+    this.#healthComponent = new HealthComponent(CONFIG.PLAYER_HEALTH)
+    this.#colliderComponent = new ColliderComponent(this.#healthComponent)
     // this.#verticalMovementComponent = new VerticalMovementComponent(
     //   this,
     //   this.#keyboardInputComponent,
     //   CONFIG.PLAYER_MOVEMENT_VELOCITY,
     // )
     //
-
 
     // TODO Do this
 
@@ -71,7 +76,45 @@ export class Player extends Phaser.GameObjects.Container {
     )
   }
 
+  get weaponGameObjectGroup() {
+    return this.#weaponComponent.bulletGroup
+  }
+
+  get weaponComponent() {
+    return this.#weaponComponent
+  }
+
+  get colliderComponent() {
+    return this.#colliderComponent
+  }
+
+  get healthComponent() {
+    return this.#healthComponent
+  }
+
+  #hide() {
+    this.setActive(false)
+    this.setVisible(false)
+    this.#shipEngineSprite.setVisible(false)
+    this.#shipEngineThrusterSprite.setVisible(false)
+    this.#keyboardInputComponent.lockInput = true
+  }
+
   update(_: number, dt: number) {
+    if (!this.active) {
+      return
+    }
+
+    if (this.#healthComponent.isDead) {
+      this.#hide()
+      this.setVisible(true)
+      this.#shipSprite.play({
+        key: 'explosion',
+      })
+      return
+    }
+
+    this.#shipSprite.setFrame((CONFIG.PLAYER_HEALTH - this.#healthComponent.life).toString(10))
     // on scene update calling inputs custom update methods
     this.#keyboardInputComponent.update()
     this.#horizontalMovementComponent.update()

@@ -1,6 +1,8 @@
 import { BotScoutInputComponent } from '../components/input/bot-scout-input-component'
 import { VerticalMovementComponent } from '../components/movement/vertical-movement-component'
 import { HorizontalMovementComponent } from '../components/movement/horizontal-movement-component'
+import { HealthComponent } from '../components/health/health-component'
+import { ColliderComponent } from '../components/collider/collider-component'
 import CONFIG from '../config'
 
 export class ScoutEnemy extends Phaser.GameObjects.Container {
@@ -9,6 +11,8 @@ export class ScoutEnemy extends Phaser.GameObjects.Container {
   #horizontalMovementComponent
   #shipSprite: Phaser.GameObjects.Sprite
   #shipEngineSprite: Phaser.GameObjects.Sprite
+  #healthComponent
+  #colliderComponent
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     // initial positioning of player obj on the scene
@@ -41,6 +45,8 @@ export class ScoutEnemy extends Phaser.GameObjects.Container {
       this.#inputComponent,
       CONFIG.ENEMY_SCOUT_VERTICAL_MOVEMENT_VELOCITY,
     )
+    this.#healthComponent = new HealthComponent(CONFIG.ENEMY_SCOUT_HEALTH)
+    this.#colliderComponent = new ColliderComponent(this.#healthComponent)
 
     // we are listening to update event of the scene and run custom update method
     this.scene.events.on(Phaser.Scenes.Events.UPDATE, this.update, this)
@@ -53,7 +59,30 @@ export class ScoutEnemy extends Phaser.GameObjects.Container {
     )
   }
 
+  get colliderComponent() {
+    return this.#colliderComponent
+  }
+
+  get healthComponent() {
+    return this.#healthComponent
+  }
+
+  #hide() {
+    this.setActive(false)
+    this.setVisible(false)
+    this.#shipEngineSprite.setVisible(false)
+  }
+
   update() {
+    if (!this.active) {
+      return
+    }
+
+    if (this.#healthComponent.isDead) {
+      this.setActive(false)
+      this.setVisible(false)
+    }
+
     // on scene update calling inputs custom update methods
     this.#inputComponent.update()
     this.#verticalMovementComponent.update()
