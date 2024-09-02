@@ -15,6 +15,10 @@ export class BotScoutInputComponent extends InputComponent {
     this._right = true
   }
 
+  set startX(value: number) {
+    this.#startX = value
+  }
+
   update() {
     if (this.#gameObject.x > this.#startX + CONFIG.ENEMY_SCOUT_MAX_X) {
       this._left = true

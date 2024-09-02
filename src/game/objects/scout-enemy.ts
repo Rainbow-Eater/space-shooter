@@ -3,21 +3,31 @@ import { VerticalMovementComponent } from '../components/movement/vertical-movem
 import { HorizontalMovementComponent } from '../components/movement/horizontal-movement-component'
 import { HealthComponent } from '../components/health/health-component'
 import { ColliderComponent } from '../components/collider/collider-component'
+import { EventBusComponent } from '../components/events/event-bus-component'
+import { CUSTOM_EVENTS } from '../event-types'
 import CONFIG from '../config'
 
-export class ScoutEnemy extends Phaser.GameObjects.Container {
-  #inputComponent
-  #verticalMovementComponent
-  #horizontalMovementComponent
-  #shipSprite: Phaser.GameObjects.Sprite
+interface EnemyObject extends Phaser.GameObjects.GameObject {
+  init(eventBusComponent: EventBusComponent): void
+  reset(): void
+}
+
+export class ScoutEnemy extends Phaser.GameObjects.Container implements EnemyObject {
+  #inputComponent!: BotScoutInputComponent
+  #verticalMovementComponent!: VerticalMovementComponent
+  #horizontalMovementComponent!: HorizontalMovementComponent
+  #healthComponent!: HealthComponent
+  #colliderComponent!: ColliderComponent
+  #eventBusComponent!: EventBusComponent
   #shipEngineSprite: Phaser.GameObjects.Sprite
-  #healthComponent
-  #colliderComponent
+  #shipSprite: Phaser.GameObjects.Sprite
+  #isInitialized: boolean
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     // initial positioning of player obj on the scene
     super(scene, x, y, [])
 
+    this.#isInitialized = false
     // adding player obj to the scene and adding physics to it
     scene.add.existing(this)
     scene.physics.add.existing(this)
@@ -32,21 +42,6 @@ export class ScoutEnemy extends Phaser.GameObjects.Container {
     this.#shipEngineSprite.play('scout_engine')
 
     this.add([this.#shipEngineSprite, this.#shipSprite])
-
-    // adding keyboard movements
-    this.#inputComponent = new BotScoutInputComponent(this)
-    this.#horizontalMovementComponent = new HorizontalMovementComponent(
-      this,
-      this.#inputComponent,
-      CONFIG.ENEMY_SCOUT_HORIZONTAL_MOVEMENT_VELOCITY,
-    )
-    this.#verticalMovementComponent = new VerticalMovementComponent(
-      this,
-      this.#inputComponent,
-      CONFIG.ENEMY_SCOUT_VERTICAL_MOVEMENT_VELOCITY,
-    )
-    this.#healthComponent = new HealthComponent(CONFIG.ENEMY_SCOUT_HEALTH)
-    this.#colliderComponent = new ColliderComponent(this.#healthComponent)
 
     // we are listening to update event of the scene and run custom update method
     this.scene.events.on(Phaser.Scenes.Events.UPDATE, this.update, this)
@@ -67,14 +62,38 @@ export class ScoutEnemy extends Phaser.GameObjects.Container {
     return this.#healthComponent
   }
 
-  #hide() {
-    this.setActive(false)
-    this.setVisible(false)
-    this.#shipEngineSprite.setVisible(false)
+  init(eventBusComponent: EventBusComponent) {
+    // initiating enemy components
+    this.#eventBusComponent = eventBusComponent
+    this.#inputComponent = new BotScoutInputComponent(this)
+    this.#horizontalMovementComponent = new HorizontalMovementComponent(
+      this,
+      this.#inputComponent,
+      CONFIG.ENEMY_SCOUT_HORIZONTAL_MOVEMENT_VELOCITY,
+    )
+    this.#verticalMovementComponent = new VerticalMovementComponent(
+      this,
+      this.#inputComponent,
+      CONFIG.ENEMY_SCOUT_VERTICAL_MOVEMENT_VELOCITY,
+    )
+    this.#healthComponent = new HealthComponent(CONFIG.ENEMY_SCOUT_HEALTH)
+    this.#colliderComponent = new ColliderComponent(this.#healthComponent)
+    this.#eventBusComponent.emit(CUSTOM_EVENTS.ENEMY_INIT, this)
+
+    this.#isInitialized = true
+  }
+
+  reset() {
+    this.setActive(true)
+    this.setVisible(true)
+    this.healthComponent.reset()
+    this.#inputComponent.startX = this.x
+    this.#verticalMovementComponent.reset()
+    this.#horizontalMovementComponent.reset()
   }
 
   update() {
-    if (!this.active) {
+    if (!this.active || !this.#isInitialized) {
       return
     }
 
