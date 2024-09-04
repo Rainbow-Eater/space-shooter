@@ -6,11 +6,7 @@ import { WeaponComponent } from '../components/weapons/weapon-component'
 import { EventBusComponent } from '../components/events/event-bus-component'
 import { CUSTOM_EVENTS } from '../event-types'
 import CONFIG from '../config'
-
-interface EnemyObject extends Phaser.GameObjects.GameObject {
-  init(eventBusComponent: EventBusComponent): void
-  reset(): void
-}
+import { EnemyObject } from '../types'
 
 export class FighterEnemy extends Phaser.GameObjects.Container implements EnemyObject {
   #inputComponent!: BotFighterInputComponent

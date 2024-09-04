@@ -3,6 +3,7 @@ import { FighterEnemy } from '../objects/fighter-enemy'
 import { ScoutEnemy } from '../objects/scout-enemy'
 import { EnemySpawnerComponent } from '../components/spawners/enemy-spawner-component'
 import { EventBusComponent } from '../components/events/event-bus-component'
+import { Bullet } from '../types'
 import CONFIG from '../config'
 import { CUSTOM_EVENTS } from '../event-types'
 
@@ -42,6 +43,7 @@ export class GameScene extends Phaser.Scene {
       (playerGameObject, enemyGameObject) => {
         const playerWithCollider = playerGameObject as Player
         const enemyWithCollider = enemyGameObject as ScoutEnemy
+        if (!playerWithCollider.active || !enemyWithCollider.active) return
 
         playerWithCollider.colliderComponent.collideWithEnemyShip()
         enemyWithCollider.colliderComponent.collideWithEnemyShip()
@@ -53,6 +55,7 @@ export class GameScene extends Phaser.Scene {
       (playerGameObject, enemyGameObject) => {
         const playerWithCollider = playerGameObject as Player
         const enemyWithCollider = enemyGameObject as FighterEnemy
+        if (!playerWithCollider.active || !enemyWithCollider.active) return
 
         playerWithCollider.colliderComponent.collideWithEnemyShip()
         enemyWithCollider.colliderComponent.collideWithEnemyShip()
@@ -73,8 +76,10 @@ export class GameScene extends Phaser.Scene {
         gameObject.weaponGameObjectGroup,
         (playerGameObject, projectileGameObject) => {
           const playerWithCollider = playerGameObject as Player
+          const projectileWithCollier = projectileGameObject as Bullet
+          if (!playerWithCollider.active || !projectileWithCollier.active) return
 
-          gameObject.weaponComponent.destroyBullet(projectileGameObject)
+          gameObject.weaponComponent.destroyBullet(projectileWithCollier)
           playerWithCollider.colliderComponent.collideWithEnemyProjectile()
         },
       )
@@ -85,8 +90,10 @@ export class GameScene extends Phaser.Scene {
       player.weaponGameObjectGroup,
       (enemyGameObject, projectileGameObject) => {
         const enemyWithCollider = enemyGameObject as ScoutEnemy
+        const projectileWithCollier = projectileGameObject as Bullet
+        if (!enemyWithCollider.active || !projectileWithCollier.active) return
 
-        player.weaponComponent.destroyBullet(projectileGameObject)
+        player.weaponComponent.destroyBullet(projectileWithCollier)
         enemyWithCollider.colliderComponent.collideWithEnemyProjectile()
       },
     )
@@ -96,8 +103,10 @@ export class GameScene extends Phaser.Scene {
       player.weaponGameObjectGroup,
       (enemyGameObject, projectileGameObject) => {
         const enemyWithCollider = enemyGameObject as FighterEnemy
+        const projectileWithCollier = projectileGameObject as Bullet
+        if (!enemyWithCollider.active || !projectileWithCollier.active) return
 
-        player.weaponComponent.destroyBullet(projectileGameObject)
+        player.weaponComponent.destroyBullet(projectileWithCollier)
         enemyWithCollider.colliderComponent.collideWithEnemyProjectile()
       },
     )

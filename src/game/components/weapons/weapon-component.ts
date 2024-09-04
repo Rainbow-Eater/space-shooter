@@ -1,4 +1,5 @@
 import { InputComponent } from '../input/input-component'
+import { Bullet } from '../../types'
 
 interface BulletConfig {
   maxCount: number
@@ -7,10 +8,6 @@ interface BulletConfig {
   speed: number
   lifespan: number
   flipY: boolean
-}
-
-interface Bullet extends Phaser.Physics.Arcade.Image {
-  state: number
 }
 
 export class WeaponComponent {
@@ -98,7 +95,7 @@ export class WeaponComponent {
     })
   }
 
-  destroyBullet(bullet) {
+  destroyBullet(bullet: Bullet) {
     bullet.setState(0)
   }
 }
