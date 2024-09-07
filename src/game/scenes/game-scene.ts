@@ -6,6 +6,7 @@ import { EventBusComponent } from '../components/events/event-bus-component'
 import { Bullet } from '../types'
 import CONFIG from '../config'
 import { CUSTOM_EVENTS } from '../event-types'
+import { EnemyDestroyedComponent } from '../components/spawners/enemy-destroyed-component'
 
 export class GameScene extends Phaser.Scene {
   constructor() {
@@ -35,6 +36,8 @@ export class GameScene extends Phaser.Scene {
       },
       eventBusComponent,
     )
+
+    new EnemyDestroyedComponent(this, eventBusComponent)
 
     // +++ Adding collision between player and enemy ships +++
     this.physics.add.overlap(

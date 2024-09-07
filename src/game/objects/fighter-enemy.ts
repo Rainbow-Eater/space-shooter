@@ -8,6 +8,8 @@ import { CUSTOM_EVENTS } from '../event-types'
 import CONFIG from '../config'
 import { EnemyObject } from '../types'
 
+const SHIP_ASSET_NAME = 'fighter'
+
 export class FighterEnemy extends Phaser.GameObjects.Container implements EnemyObject {
   #inputComponent!: BotFighterInputComponent
   #weaponComponent!: WeaponComponent
@@ -33,7 +35,7 @@ export class FighterEnemy extends Phaser.GameObjects.Container implements EnemyO
     body.setOffset(-12, -12)
 
     // adding player obj sprites
-    this.#shipSprite = scene.add.sprite(0, 0, 'fighter', 0)
+    this.#shipSprite = scene.add.sprite(0, 0, SHIP_ASSET_NAME, 0)
     this.#shipEngineSprite = scene.add.sprite(0, 0, 'fighter_engine').setFlipY(true)
     this.#shipEngineSprite.play('fighter_engine')
 
@@ -64,6 +66,14 @@ export class FighterEnemy extends Phaser.GameObjects.Container implements EnemyO
 
   get healthComponent() {
     return this.#healthComponent
+  }
+
+  get shipAssetKey() {
+    return SHIP_ASSET_NAME
+  }
+
+  get shipDestroyedAnimationKey() {
+    return 'fighter_destroy'
   }
 
   init(eventBusComponent: EventBusComponent) {
@@ -105,6 +115,7 @@ export class FighterEnemy extends Phaser.GameObjects.Container implements EnemyO
     if (this.#healthComponent.isDead) {
       this.setActive(false)
       this.setVisible(false)
+      this.#eventBusComponent.emit(CUSTOM_EVENTS.ENEMY_DESTROYED, this)
     }
 
     // on scene update calling inputs custom update methods

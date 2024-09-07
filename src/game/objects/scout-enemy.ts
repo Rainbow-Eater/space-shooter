@@ -8,6 +8,8 @@ import { CUSTOM_EVENTS } from '../event-types'
 import CONFIG from '../config'
 import { EnemyObject } from '../types'
 
+const SHIP_ASSET_NAME = 'scout'
+
 export class ScoutEnemy extends Phaser.GameObjects.Container implements EnemyObject {
   #inputComponent!: BotScoutInputComponent
   #verticalMovementComponent!: VerticalMovementComponent
@@ -33,7 +35,7 @@ export class ScoutEnemy extends Phaser.GameObjects.Container implements EnemyObj
     body.setOffset(-12, -12)
 
     // adding player obj sprites
-    this.#shipSprite = scene.add.sprite(0, 0, 'scout', 0)
+    this.#shipSprite = scene.add.sprite(0, 0, SHIP_ASSET_NAME, 0)
     this.#shipEngineSprite = scene.add.sprite(0, 0, 'scout_engine').setFlipY(true)
     this.#shipEngineSprite.play('scout_engine')
 
@@ -56,6 +58,14 @@ export class ScoutEnemy extends Phaser.GameObjects.Container implements EnemyObj
 
   get healthComponent() {
     return this.#healthComponent
+  }
+
+  get shipAssetKey() {
+    return SHIP_ASSET_NAME
+  }
+
+  get shipDestroyedAnimationKey() {
+    return 'scout_destroy'
   }
 
   init(eventBusComponent: EventBusComponent) {
@@ -96,6 +106,7 @@ export class ScoutEnemy extends Phaser.GameObjects.Container implements EnemyObj
     if (this.#healthComponent.isDead) {
       this.setActive(false)
       this.setVisible(false)
+      this.#eventBusComponent.emit(CUSTOM_EVENTS.ENEMY_DESTROYED, this)
     }
 
     // on scene update calling inputs custom update methods
