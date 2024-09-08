@@ -1,6 +1,7 @@
 import { ScoutEnemy } from '../../objects/scout-enemy'
 import { FighterEnemy } from '../../objects/fighter-enemy'
 import { EventBusComponent } from '../events/event-bus-component'
+import { CUSTOM_EVENTS } from '../../event-types'
 
 type Enemy = typeof ScoutEnemy | typeof FighterEnemy
 interface SpawnConfig {
@@ -18,6 +19,7 @@ export class EnemySpawnerComponent {
   #spawnInterval
   #spawnAt
   #group: Phaser.GameObjects.Group
+  #disableSpawning
 
   constructor(
     scene: Phaser.Scene,
@@ -40,6 +42,7 @@ export class EnemySpawnerComponent {
 
     this.#spawnInterval = spawnConfig.interval
     this.#spawnAt = spawnConfig.spawnAt
+    this.#disableSpawning = false
 
     this.#scene.events.on(Phaser.Scenes.Events.UPDATE, this.update, this)
     this.#scene.physics.world.on(Phaser.Physics.Arcade.Events.WORLD_STEP, this.worldStep, this)
@@ -50,6 +53,10 @@ export class EnemySpawnerComponent {
       },
       this,
     )
+
+    eventBusComponent.on(CUSTOM_EVENTS.GAME_OVER, () => {
+      this.#disableSpawning = true
+    })
   }
 
   get phaserGroup() {
@@ -57,6 +64,10 @@ export class EnemySpawnerComponent {
   }
 
   update(_: number, dt: number) {
+    if (this.#disableSpawning) {
+      return
+    }
+
     this.#spawnAt -= dt
     if (this.#spawnAt > 0) return
 

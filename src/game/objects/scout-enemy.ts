@@ -4,9 +4,9 @@ import { HorizontalMovementComponent } from '../components/movement/horizontal-m
 import { HealthComponent } from '../components/health/health-component'
 import { ColliderComponent } from '../components/collider/collider-component'
 import { EventBusComponent } from '../components/events/event-bus-component'
+import { EnemyObject } from '../types'
 import { CUSTOM_EVENTS } from '../event-types'
 import CONFIG from '../config'
-import { EnemyObject } from '../types'
 
 const SHIP_ASSET_NAME = 'scout'
 
