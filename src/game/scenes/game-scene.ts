@@ -9,6 +9,7 @@ import { Score } from '../objects/ui/score'
 import { Lives } from '../objects/ui/lives'
 import { CUSTOM_EVENTS } from '../event-types'
 import CONFIG from '../config'
+import { AudioManager } from '../objects/audio-manager'
 
 export class GameScene extends Phaser.Scene {
   constructor() {
@@ -138,8 +139,10 @@ export class GameScene extends Phaser.Scene {
       },
     )
 
+    // +++ adding ui, sound and spawn component +++
     new Score(this, eventBusComponent)
     new Lives(this, eventBusComponent)
+    new AudioManager(this, eventBusComponent)
   }
 }
 

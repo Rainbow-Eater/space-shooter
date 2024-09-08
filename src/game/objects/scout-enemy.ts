@@ -83,7 +83,7 @@ export class ScoutEnemy extends Phaser.GameObjects.Container implements EnemyObj
       CONFIG.ENEMY_SCOUT_VERTICAL_MOVEMENT_VELOCITY,
     )
     this.#healthComponent = new HealthComponent(CONFIG.ENEMY_SCOUT_HEALTH)
-    this.#colliderComponent = new ColliderComponent(this.#healthComponent)
+    this.#colliderComponent = new ColliderComponent(this.#healthComponent, this.#eventBusComponent)
     this.#eventBusComponent.emit(CUSTOM_EVENTS.ENEMY_INIT, this)
 
     this.#isInitialized = true

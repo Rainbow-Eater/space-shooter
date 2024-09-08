@@ -1,5 +1,7 @@
 import { InputComponent } from '../input/input-component'
 import { Bullet } from '../../types'
+import { EventBusComponent } from '../events/event-bus-component'
+import { CUSTOM_EVENTS } from '../../event-types'
 
 interface BulletConfig {
   maxCount: number
@@ -16,15 +18,18 @@ export class WeaponComponent {
   #bulletGroup
   #bulletConfig
   #fireBulletInterval
+  #eventBusComponent
 
   constructor(
     gameObject: Phaser.GameObjects.Container,
     inputComponent: InputComponent,
     bulletConfig: BulletConfig,
+    eventBusComponent: EventBusComponent,
   ) {
     this.#gameObject = gameObject
     this.#inputComponent = inputComponent
     this.#bulletConfig = bulletConfig
+    this.#eventBusComponent = eventBusComponent
     this.#fireBulletInterval = 0
 
     this.#bulletGroup = this.#gameObject.scene.physics.add.group({
@@ -80,6 +85,7 @@ export class WeaponComponent {
       bullet.setFlipY(this.#bulletConfig.flipY)
 
       this.#fireBulletInterval = this.#bulletConfig.interval
+      this.#eventBusComponent.emit(CUSTOM_EVENTS.SHIP_SHOOT)
     }
   }
 

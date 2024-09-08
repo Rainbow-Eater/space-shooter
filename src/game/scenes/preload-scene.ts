@@ -8,7 +8,6 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   create() {
-    console.log('preload scene')
     this.#createAnimations()
     this.scene.start('GameScene')
   }

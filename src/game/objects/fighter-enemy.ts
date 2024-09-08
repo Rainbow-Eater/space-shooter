@@ -4,9 +4,9 @@ import { BotFighterInputComponent } from '../components/input/bot-fighter-input-
 import { VerticalMovementComponent } from '../components/movement/vertical-movement-component'
 import { WeaponComponent } from '../components/weapons/weapon-component'
 import { EventBusComponent } from '../components/events/event-bus-component'
+import { EnemyObject } from '../types'
 import { CUSTOM_EVENTS } from '../event-types'
 import CONFIG from '../config'
-import { EnemyObject } from '../types'
 
 const SHIP_ASSET_NAME = 'fighter'
 
@@ -85,16 +85,21 @@ export class FighterEnemy extends Phaser.GameObjects.Container implements EnemyO
       this.#inputComponent,
       CONFIG.ENEMY_FIGHTER_MOVEMENT_VELOCITY,
     )
-    this.#weaponComponent = new WeaponComponent(this, this.#inputComponent, {
-      maxCount: CONFIG.ENEMY_FIGHTER_BULLET_MAX_COUNT,
-      interval: CONFIG.ENEMY_FIGHTER_BULLET_INTERVAL,
-      speed: CONFIG.ENEMY_FIGHTER_BULLET_SPEED,
-      lifespan: CONFIG.ENEMY_FIGHTER_BULLET_LIFESPAN,
-      yOffset: 10,
-      flipY: true,
-    })
+    this.#weaponComponent = new WeaponComponent(
+      this,
+      this.#inputComponent,
+      {
+        maxCount: CONFIG.ENEMY_FIGHTER_BULLET_MAX_COUNT,
+        interval: CONFIG.ENEMY_FIGHTER_BULLET_INTERVAL,
+        speed: CONFIG.ENEMY_FIGHTER_BULLET_SPEED,
+        lifespan: CONFIG.ENEMY_FIGHTER_BULLET_LIFESPAN,
+        yOffset: 10,
+        flipY: true,
+      },
+      this.#eventBusComponent,
+    )
     this.#healthComponent = new HealthComponent(CONFIG.ENEMY_FIGHTER_HEALTH)
-    this.#colliderComponent = new ColliderComponent(this.#healthComponent)
+    this.#colliderComponent = new ColliderComponent(this.#healthComponent, this.#eventBusComponent)
     this.#eventBusComponent.emit(CUSTOM_EVENTS.ENEMY_INIT, this)
 
     this.#isInitialized = true

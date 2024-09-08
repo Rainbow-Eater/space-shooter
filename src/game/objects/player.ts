@@ -48,16 +48,21 @@ export class Player extends Phaser.GameObjects.Container {
       this.#keyboardInputComponent,
       CONFIG.PLAYER_MOVEMENT_VELOCITY,
     )
-    this.#weaponComponent = new WeaponComponent(this, this.#keyboardInputComponent, {
-      maxCount: CONFIG.PLAYER_BULLET_MAX_COUNT,
-      yOffset: -20,
-      interval: CONFIG.PLAYER_BULLET_INTERVAL,
-      speed: CONFIG.PLAYER_BULLET_SPEED,
-      lifespan: CONFIG.PLAYER_BULLET_LIFESPAN,
-      flipY: false,
-    })
+    this.#weaponComponent = new WeaponComponent(
+      this,
+      this.#keyboardInputComponent,
+      {
+        maxCount: CONFIG.PLAYER_BULLET_MAX_COUNT,
+        yOffset: -20,
+        interval: CONFIG.PLAYER_BULLET_INTERVAL,
+        speed: CONFIG.PLAYER_BULLET_SPEED,
+        lifespan: CONFIG.PLAYER_BULLET_LIFESPAN,
+        flipY: false,
+      },
+      this.#eventBusComponent,
+    )
     this.#healthComponent = new HealthComponent(CONFIG.PLAYER_HEALTH)
-    this.#colliderComponent = new ColliderComponent(this.#healthComponent)
+    this.#colliderComponent = new ColliderComponent(this.#healthComponent, this.#eventBusComponent)
 
     this.#hide()
     // we are listening for spawn event to init our player obj and its components
