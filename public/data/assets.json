@@ -76,6 +76,17 @@
         "key": "ship",
         "url": "ship.png",
         "frameConfig": { "frameWidth": 48, "frameHeight": 48 }
+      },
+      {
+        "type": "image",
+        "key": "heal",
+        "url": "heal.png"
+      },
+      {
+        "type": "spritesheet",
+        "key": "heal_animation",
+        "url": "heal_animation.png",
+        "frameConfig": { "frameWidth": 32, "frameHeight": 32 }
       }
     ]
   },

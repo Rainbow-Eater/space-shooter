@@ -10,6 +10,7 @@ import { Lives } from '../objects/ui/lives'
 import { CUSTOM_EVENTS } from '../event-types'
 import CONFIG from '../config'
 import { AudioManager } from '../objects/audio-manager'
+import { Heal } from '../objects/heal'
 
 export class GameScene extends Phaser.Scene {
   constructor() {
@@ -52,6 +53,16 @@ export class GameScene extends Phaser.Scene {
       },
       eventBusComponent,
     )
+
+    const healSpawner = new EnemySpawnerComponent(
+      this,
+      Heal,
+      {
+        interval: CONFIG.HEAL_SPAWN_INTERVAL,
+        spawnAt: CONFIG.HEAL_SPAWN_AT,
+      },
+      eventBusComponent,
+    )
     const fighterSpawner = new EnemySpawnerComponent(
       this,
       FighterEnemy,
@@ -61,8 +72,22 @@ export class GameScene extends Phaser.Scene {
       },
       eventBusComponent,
     )
-
     new EnemyDestroyedComponent(this, eventBusComponent)
+
+    // +++ Adding collision between player and heal component +++
+
+    this.physics.add.overlap(
+      player,
+      healSpawner.phaserGroup,
+      (playerGameObject, healGameObject) => {
+        const playerWithCollider = playerGameObject as Player
+        const healWithCollider = healGameObject as Heal
+        if (!playerWithCollider.active || !healWithCollider.active) return
+
+        playerWithCollider.colliderComponent.collideWithHeal()
+        healWithCollider.colliderComponent.collideWithEnemyShip()
+      },
+    )
 
     // +++ Adding collision between player and enemy ships +++
     this.physics.add.overlap(

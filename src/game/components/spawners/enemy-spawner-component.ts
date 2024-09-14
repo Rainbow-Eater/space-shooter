@@ -1,9 +1,11 @@
 import { ScoutEnemy } from '../../objects/scout-enemy'
 import { FighterEnemy } from '../../objects/fighter-enemy'
 import { EventBusComponent } from '../events/event-bus-component'
+import { Heal } from '../../objects/heal'
 import { CUSTOM_EVENTS } from '../../event-types'
 
-type Enemy = typeof ScoutEnemy | typeof FighterEnemy
+type Entity = typeof ScoutEnemy | typeof FighterEnemy | typeof Heal
+
 interface SpawnConfig {
   interval: number
   spawnAt: number
@@ -23,7 +25,7 @@ export class EnemySpawnerComponent {
 
   constructor(
     scene: Phaser.Scene,
-    enemyClass: Enemy,
+    enemyClass: Entity,
     spawnConfig: SpawnConfig,
     eventBusComponent: EventBusComponent,
   ) {

@@ -22,11 +22,11 @@ export class ScoutEnemy extends Phaser.GameObjects.Container implements EnemyObj
   #isInitialized: boolean
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
-    // initial positioning of player obj on the scene
+    // initial positioning of enemy obj on the scene
     super(scene, x, y, [])
 
     this.#isInitialized = false
-    // adding player obj to the scene and adding physics to it
+    // adding enemy obj to the scene and adding physics to it
     scene.add.existing(this)
     scene.physics.add.existing(this)
     const body = this.body as Phaser.Physics.Arcade.Body
@@ -34,7 +34,7 @@ export class ScoutEnemy extends Phaser.GameObjects.Container implements EnemyObj
     body.setSize(24, 24)
     body.setOffset(-12, -12)
 
-    // adding player obj sprites
+    // adding enemy obj sprites
     this.#shipSprite = scene.add.sprite(0, 0, SHIP_ASSET_NAME, 0)
     this.#shipEngineSprite = scene.add.sprite(0, 0, 'scout_engine').setFlipY(true)
     this.#shipEngineSprite.play('scout_engine')

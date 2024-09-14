@@ -59,5 +59,12 @@
     "frameRate": 8,
     "repeat": -1,
     "assetKey": "bg3"
+  },
+  {
+    "key": "heal_animation",
+    "frames": [1, 2, 3, 4, 5, 6, 7],
+    "frameRate": 12,
+    "repeat": -1,
+    "assetKey": "heal_animation"
   }
 ]

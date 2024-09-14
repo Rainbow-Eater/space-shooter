@@ -20,6 +20,16 @@ export class Lives extends Phaser.GameObjects.Container {
       this.add(ship)
     }
 
+    this.#eventBusComponent.on(CUSTOM_EVENTS.PLAYER_HEALED, () => {
+      if (this.#lives === CONFIG.PLAYER_LIVES) return
+      this.#lives += 1
+      const ship = scene.add
+        .image((this.#lives - 1) * 20, 0, 'ship')
+        .setScale(0.6)
+        .setOrigin(0)
+      this.add(ship)
+    })
+
     this.#eventBusComponent.on(CUSTOM_EVENTS.PLAYER_DESTROYED, () => {
       this.#lives -= 1
       this.getAt(this.#lives).destroy()

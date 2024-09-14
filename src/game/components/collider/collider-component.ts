@@ -27,4 +27,11 @@ export class ColliderComponent {
     this.#healthComponent.hit()
     this.#eventBusComponent.emit(CUSTOM_EVENTS.SHIP_HIT)
   }
+
+  collideWithHeal() {
+    if (this.#healthComponent.isDead) return
+
+    this.#healthComponent.heal()
+    this.#eventBusComponent.emit(CUSTOM_EVENTS.PLAYER_HEALED)
+  }
 }

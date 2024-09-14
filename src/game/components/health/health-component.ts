@@ -22,6 +22,12 @@ export class HealthComponent {
     this.#isDead = false
   }
 
+  heal() {
+    if (this.#isDead) return
+    if (this.#currentLife === this.#startingLife) return
+    this.#currentLife += 1
+  }
+
   hit() {
     if (this.#isDead) {
       return
